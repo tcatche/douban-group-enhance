@@ -35,7 +35,7 @@
   const runFilter = (config) => {
     $('.topics tr .td-subject a, .title a').each(function() {
       var $this = $(this);
-      var title = $this.attr('title');
+      var title = $this.attr('title') || '';
       console.log(title);
       var isInInclude = title => (config.include || []).filter(v => !!v).find(keyword => title.indexOf(keyword) >= 0);
       var isInDeclude = title => (config.declude || []).filter(v => !!v).find(keyword => title.indexOf(keyword) >= 0);
@@ -55,28 +55,67 @@
     <div id="douban_group_filter_container" class="douban_group_filter">
       <style>
         .douban_group_filter {
-          width: 100vw; height: 100vh; position: absolute; top: 0; left: 0;
+          width: 100vw;
+          height: 100vh;
+          position: absolute;
+          top: 0;
+          left: 0;
           display:none;
         }
         .douban_group_filter_mask {
-          position: absolute; background: rgba(0,0,0,.6); width: 100%; height: 100%;
+          position: absolute;
+          background: rgba(0,0,0,.6);
+          width: 100%;
+          height: 100%;
         }
         .douban_group_filter_inner {
-          width: 400px; text-align: center; margin: auto; top: 100px; position: relative; background: #fff; padding: 30px;
+          width: 400px;
+          text-align: center;
+          margin: auto;
+          top: 100px;
+          position: relative;
+          background: #fff;
+          padding: 30px;
+          height: 300px;
+          overflow: auto;
+        }
+        .douban_group_filter_inner_content {
+          text-align: left;
         }
         textarea {
           width: 100%;
+          height: 60px;
+          resize: auto;
+          resize: vertical;
+          min-height: 40px;
+        }
+        .douban_group_filter_buttons {
+          float: right;
         }
         .douban_group_filter_button {
-          color: #ca6445; padding: 5px 10px; font-size: 13px; border: 1px solid #f8dcc3; background: #fae9da; font-weight: normal; cursor: pointer;
+          color: #ca6445;
+          padding: 5px 20px;
+          font-size: 13px;
+          border: 1px solid #f8dcc3;
+          background: #fae9da;
+          font-weight: normal;
+          cursor: pointer;
         }
       </style>
       <div class="douban_group_filter_mask"></div>
       <div class="douban_group_filter_inner">
-        <textarea rows="5" placeholder="请填入要高亮的关键字，多个关键字用空格隔开"></textarea>
-        <textarea rows="5" placeholder="请填入要排除的关键字，多个关键字用空格隔开 "></textarea>
-        <button id="douban_group_filter_sure" class="douban_group_filter_button">确定</button>
-        <button id="douban_group_filter_cancel" class="douban_group_filter_button" >取消</button>
+        <div class="douban_group_filter_inner_content">
+          <h2>小组帖子过滤设置</h2>
+          <p>请填入要高亮的关键字，多个关键字用空格隔开:</p>
+          <textarea placeholder="请填入要高亮的关键字，多个关键字用空格隔开"></textarea>
+          <p />
+          <p>请填入要排除的关键字，多个关键字用空格隔开:</p>
+          <textarea placeholder="请填入要排除的关键字，多个关键字用空格隔开 "></textarea>
+          <p class="douban_group_filter_buttons">
+            <button id="douban_group_filter_sure" class="douban_group_filter_button">确定</button>
+            <button id="douban_group_filter_cancel" class="douban_group_filter_button" >取消</button>
+          </p>
+        </div>
       </div>
     </textarea>
   `;
