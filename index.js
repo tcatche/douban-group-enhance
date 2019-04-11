@@ -1,12 +1,11 @@
 // ==UserScript==
 // @name         豆瓣小组功能增强
-// @version      0.1.1
+// @version      0.1.4
 // @license      MIT
 // @namespace    https://tcatche.github.io/
-// @description  豆瓣小组展示功能增强：高亮包含指定关键字的帖子；隐藏包含指定关键字的帖子；去除标题省略号，展示全部文本；新标签页打开帖子
+// @description  豆瓣小组展示功能增强：高亮包含指定关键字的帖子；隐藏包含指定关键字的帖子；去除标题省略号，展示全部文本；新标签页打开帖子;展示是否是楼主的标识;展示楼层号
 // @author       tcatche
 // @match        https://www.douban.com/group/*
-// @require      https://code.jquery.com/jquery-3.3.1.min.js
 // @homepageURL  https://github.com/tcatche/douban-group-enhance
 // @supportURL   https://github.com/tcatche/douban-group-enhance/issues
 // @downloadURL  https://github.com/tcatche/douban-group-enhance/blob/master/index.js
