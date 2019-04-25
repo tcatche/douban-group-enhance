@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         豆瓣小组功能增强
-// @version      0.2.0
+// @version      0.2.0.1
 // @license      MIT
 // @namespace    https://tcatche.github.io/
 // @description  豆瓣小组展示功能增强：高亮包含指定关键字的帖子；隐藏包含指定关键字的帖子；去除标题省略号，展示全部文本；新标签页打开帖子;展示是否是楼主的标识;展示楼层号；淡化已读帖子标题；增加帖子内内容跳转
@@ -23,9 +23,9 @@
     // load user config
     const getConfig = () => {
       const configString = localStorage.getItem('douban_group_enhance_config');
-      const odlConfigString = localStorage.getItem('douban_group_filter_config');
+      const oldConfigString = localStorage.getItem('douban_group_filter_config');
       try {
-        const config = JSON.parse(configString || odlConfigString);
+        const config = JSON.parse(configString || oldConfigString);
         return config;
       } catch (e) {
         return {};
@@ -35,8 +35,8 @@
     // run user filters
     const runFilter = (config, self) => {
       const title = self.attr('title') || '';
-      const isInInclude = title => (config.include || []).filter(v => !!v).find(keyword => title.indexOf(keyword) >= 0);
-      const isInDeclude = title => (config.declude || []).filter(v => !!v).find(keyword => title.indexOf(keyword) >= 0);
+      const isInInclude = title => (config.include || []).find(keyword => title.indexOf(keyword) >= 0);
+      const isInDeclude = title => (config.declude || []).find(keyword => title.indexOf(keyword) >= 0);
       const isTitleInInclude = isInInclude(title);
       const isTitleInDeclude = isInDeclude(title);
       if (isTitleInInclude && !isTitleInDeclude) {
@@ -66,7 +66,18 @@
     const runFadeVisitedTitle = config => {
       if (config.fadeVisited) {
         if ($('#fadeVisitedStyle').length === 0) {
-          $('body').append('<style id="fadeVisitedStyle">.topics .td-subject a:visited, .title a:visited{ color: #ddd } .douban_group_enhance_highlight:visited{ color: #ddd; background: #ccc;}</style>');
+          $('body').append(`
+            <style id="fadeVisitedStyle">
+              .topics .td-subject a:visited,
+              .title a:visited {
+                color: #ddd
+              }
+              .douban_group_enhance_highlight:visited{
+                color: #ddd;
+                background: #ccc;
+              }
+            </style>
+          `);
         }
       } else {
         $('#fadeVisitedStyle').remove();
@@ -81,7 +92,7 @@
         if (!isInserted) {
           const start = +(options.params.start || 0);
           const replayNumber = start + 1 + index;
-          $(replyHead).append('<span class="douban_group_enhance_replay_tag douban_group_enhance_replay_number">' + replayNumber +'楼</span>');
+          $(replyHead).append(`<span class="douban_group_enhance_replay_tag douban_group_enhance_replay_number">${replayNumber}楼</span>`);
         }
       } else {
         $('.douban_group_enhance_replay_number').remove();
@@ -194,7 +205,7 @@
               </div>
               <div class="douban_group_enhance_config_block">
                 <input type="checkbox" id="fadeVisited" value="1">
-                勾选则淡化已经访问过的帖子标题
+                勾选则淡化已经访问过的帖子标题（无痕/隐私模式下不生效）
               </div>
 
               <h2>帖子主题页优化</h2>
@@ -284,7 +295,7 @@
             float: right;
           }
           a.douban_group_enhance_highlight {
-            background: green;
+            background: #037b82;
             color: #fff;
           }
           .douban_group_enhance_replay_tag {
@@ -343,8 +354,8 @@
       });
       $('#douban_group_enhance_sure').click(e => {
         const config = {
-          include: $('#douban_group_enhance_container textarea')[0].value.split(' '),
-          declude: $('#douban_group_enhance_container textarea')[1].value.split(' '),
+          include: $('#douban_group_enhance_container textarea')[0].value.split(' ').filter(v => !!v),
+          declude: $('#douban_group_enhance_container textarea')[1].value.split(' ').filter(v => !!v),
           openInNewTab: $('#openInNewTab')[0].checked,
           showFullTitle: $('#showFullTitle')[0].checked,
           showReplyNumber: $('#showReplyNumber')[0].checked,
@@ -368,8 +379,8 @@
     }
     // init form values
     const initDomValue = config => {
-      $('#douban_group_enhance_container textarea')[0].value = config.include.join(' ');
-      $('#douban_group_enhance_container textarea')[1].value = config.declude.join(' ');
+      $('#douban_group_enhance_container textarea')[0].value = (config.include || []).join(' ');
+      $('#douban_group_enhance_container textarea')[1].value = (config.declude || []).join(' ');
       $('#openInNewTab')[0].checked = config.openInNewTab;
       $('#showFullTitle')[0].checked = config.showFullTitle;
       $('#showReplyNumber')[0].checked = config.showReplyNumber;
@@ -378,7 +389,7 @@
       $('#jumpTo')[0].checked = config.jumpTo;
     }
     const init = () => {
-      const config = getConfig();
+      const config = getConfig() || {};
       initDom();
       initDomValue(config);
       initDomEvents();
